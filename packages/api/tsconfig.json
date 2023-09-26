@@ -1,0 +1,14 @@
+{
+  "extends": ["@v6/tsconfig/react-library.json"],
+  "compilerOptions": {
+    "outDir": "dist/",
+    "jsx": "preserve",
+    "esModuleInterop": true,
+    "declaration": true,
+    "paths": {
+      "~/*": ["./src/*"]
+    },
+    "experimentalDecorators": true
+  },
+  "exclude": ["node_modules", "dist/"]
+}

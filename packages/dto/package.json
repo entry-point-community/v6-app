@@ -1,0 +1,21 @@
+{
+  "name": "@v6/dto",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "types": "src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc -w"
+  },
+  "keywords": [],
+  "author": "theodevoid",
+  "license": "ISC",
+  "dependencies": {
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.0"
+  },
+  "devDependencies": {
+    "typescript": "5.1.3"
+  }
+}

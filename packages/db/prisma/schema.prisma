@@ -1,0 +1,27 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Make sure fields other that `userId` are either nullable or have default values
+// to avoid SQL errors when a user registers through Supabase Auth
+model Profile {
+  userId   String  @id @db.Uuid
+  username String?
+  Post     Post[]
+}
+
+model Post {
+  id            Int     @id
+  body          String
+  mediaUrl      String?
+  author        Profile @relation(fields: [profileUserId], references: [userId])
+  profileUserId String  @db.Uuid
+}
