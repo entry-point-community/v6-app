@@ -16,5 +16,6 @@
     "prettier-plugin-tailwindcss": "^0.5.3",
     "turbo": "latest"
   },
-  "name": "v6-academy"
+  "name": "v6-stack",
+  "version": "0.1.0"
 }

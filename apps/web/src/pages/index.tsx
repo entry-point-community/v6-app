@@ -1,5 +1,4 @@
 import { HeadMetaData } from '~/components/HeadMetaData';
-import { CourseShowCaseSection, HeroSection } from '~/features/home';
 
 export default function Home() {
   return (
@@ -9,8 +8,7 @@ export default function Home() {
         metaDescription="Suplemen belajar lo, buat ilmu tech industry. Gak bermaksud jadi pengganti bootcamp ataupun kuliah. Hanya berharap jadi pelengkap aja."
       />
       <main className="container max-w-screen-md px-4">
-        <HeroSection />
-        <CourseShowCaseSection />
+        <h1 className="text-2xl font-semibold text-foreground">Home Page</h1>
       </main>
     </>
   );

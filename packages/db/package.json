@@ -7,6 +7,7 @@
   "scripts": {
     "db:generate": "npx prisma generate",
     "db:push": "npx prisma db push --skip-generate",
+    "db:migration": "pnpm prsma migrate dev",
     "build": "tsc && npx prisma generate"
   },
   "author": "theodevoid",

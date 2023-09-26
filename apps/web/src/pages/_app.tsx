@@ -30,13 +30,11 @@ export default function App({ Component, pageProps }: AppProps) {
         <Head>
           <title>V6 Academy - Learn to Code the Practical Way</title>
         </Head>
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <main
             className={`${inter.variable} ${poppins.variable} mt-8 font-sans`}
           >
-            <SearchBar />
             <Component {...pageProps} />
-            <Footer />
           </main>
         </ThemeProvider>
       </QueryClientProvider>
