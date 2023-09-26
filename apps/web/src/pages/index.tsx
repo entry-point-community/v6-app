@@ -8,7 +8,9 @@ export default function Home() {
         metaDescription="Suplemen belajar lo, buat ilmu tech industry. Gak bermaksud jadi pengganti bootcamp ataupun kuliah. Hanya berharap jadi pelengkap aja."
       />
       <main className="container max-w-screen-md px-4">
-        <h1 className="text-2xl font-semibold text-foreground">Home Page</h1>
+        <h1 className="font-heading text-center text-5xl font-bold text-primary">
+          V6 Stack
+        </h1>
       </main>
     </>
   );
