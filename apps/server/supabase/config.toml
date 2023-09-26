@@ -1,6 +1,6 @@
 # A string used to distinguish different Supabase projects on the same host. Defaults to the
 # working directory name when running `supabase init`.
-project_id = "v6-academy"
+project_id = "v6-stack"
 
 [api]
 enabled = true
@@ -117,9 +117,9 @@ auth_token = "env(SUPABASE_AUTH_SMS_TWILIO_AUTH_TOKEN)"
 # `twitter`, `slack`, `spotify`, `workos`, `zoom`.
 [auth.external.github]
 enabled = true
-client_id = "env(GITHUB_OAUTH_CLIENT)"
+client_id = "env(SUPABASE_AUTH_EXTERNAL_GITHUB_CLIENT_ID)"
 # DO NOT commit your OAuth provider secret to git. Use environment variable substitution instead:
-secret = "env(GITHUB_OAUTH_SECRET)"
+secret = "env(SUPABASE_AUTH_EXTERNAL_GITHUB_SECRET)"
 # Overrides the default auth redirectUrl.
 redirect_uri = "http://localhost:3000"
 # Overrides the default auth provider URL. Used to support self-hosted gitlab, single-tenant Azure,
