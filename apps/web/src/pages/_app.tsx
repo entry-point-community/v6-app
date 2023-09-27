@@ -31,9 +31,7 @@ export default function App({ Component, pageProps }: AppProps) {
           <title>V6 Academy - Learn to Code the Practical Way</title>
         </Head>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-          <main
-            className={`${inter.variable} ${poppins.variable} mt-8 font-sans`}
-          >
+          <main className={`${inter.variable} ${poppins.variable} font-sans`}>
             <Component {...pageProps} />
           </main>
         </ThemeProvider>
