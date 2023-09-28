@@ -9,7 +9,7 @@
     <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a> -->
 
-<h3 align="center">V6 App</h3>
+<h1 align="center">V6 App</h1>
 
   <p align="center">
     A fullstack, multi-app, monorepo dedicated to streamline your development process and satisfy all your needs ;)
