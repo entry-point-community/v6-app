@@ -19,7 +19,7 @@ model Profile {
 }
 
 model Post {
-  id            Int     @id
+  id            Int     @id @default(autoincrement())
   body          String
   mediaUrl      String?
   author        Profile @relation(fields: [profileUserId], references: [userId])
