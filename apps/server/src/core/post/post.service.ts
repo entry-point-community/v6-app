@@ -14,7 +14,11 @@ export class PostService {
   ) {}
 
   public async getPosts() {
-    const posts = await this.prismaService.post.findMany();
+    const posts = await this.prismaService.post.findMany({
+      include: {
+        author: true,
+      },
+    });
 
     return posts;
   }
@@ -36,9 +40,8 @@ export class PostService {
     };
 
     if (file) {
-      const uploadedFile = await this.supabaseService.uploadToStorage(
+      const uploadedFile = await this.supabaseService.uploadToPublicStorage(
         'post_media',
-        `/`,
         file,
       );
 

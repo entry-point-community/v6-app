@@ -22,8 +22,6 @@ export class SupabaseService {
       return this.clientInstance;
     }
 
-    console.log(this.request.headers.authorization);
-
     this.clientInstance = createClient(config.supabaseUrl, config.supabaseKey, {
       auth: {
         persistSession: false,
@@ -40,17 +38,31 @@ export class SupabaseService {
     return this.clientInstance;
   }
 
-  public async uploadToStorage(
+  private extractFileExtension(mimetype: string) {
+    return mimetype.split('/')[1];
+  }
+
+  public async uploadToPublicStorage(
     bucketName: string,
-    filePath: string,
-    file: any,
+    file: Express.Multer.File,
+    fileName?: string,
   ) {
+    const fileExtension = this.extractFileExtension(file.mimetype);
+    const filePath = `${new Date().getTime()}-${
+      fileName || ''
+    }.${fileExtension}`;
+
     const { data, error } = await this.getClient()
       .storage.from(bucketName)
-      .upload(filePath, file);
+      .upload(filePath, file.buffer);
 
-    if (error) throw new InternalServerErrorException('upload failed');
+    if (error)
+      throw new InternalServerErrorException('upload failed: ' + error.message);
 
-    return data.path;
+    const uploadedFilePublicUrl = this.getClient()
+      .storage.from(bucketName)
+      .getPublicUrl(data.path);
+
+    return uploadedFilePublicUrl.data.publicUrl;
   }
 }

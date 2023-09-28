@@ -1,16 +1,19 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import Image from 'next/image';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
-import { useCreatePostMutation } from '@v6/api';
+import { useCreatePostMutation, useGetPostsQuery } from '@v6/api';
 
 import { HeadMetaData } from '~/components/HeadMetaData';
+import { AspectRatio } from '~/components/ui/aspect-ratio';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader } from '~/components/ui/card';
 import { Input } from '~/components/ui/input';
+import { queryClient } from '~/lib/react-query';
 
 const AuthShowcase = () => {
   const supabaseClient = useSupabaseClient();
 
-  const onSignInGithub = async () => {
+  const handleSignInGithub = async () => {
     supabaseClient.auth.signInWithOAuth({
       provider: 'github',
       options: {
@@ -27,7 +30,7 @@ const AuthShowcase = () => {
         Try signing in to create a post
       </p>
 
-      <Button className="mt-4" onClick={onSignInGithub}>
+      <Button className="mt-4" onClick={handleSignInGithub}>
         Sign in with Github
       </Button>
     </div>
@@ -35,25 +38,51 @@ const AuthShowcase = () => {
 };
 
 const SignedInState = () => {
+  const supabaseClient = useSupabaseClient();
+
+  const handleLogout = () => {
+    supabaseClient.auth.signOut();
+  };
+
   return (
     <div className="text-center font-semibold">
       <p>
         You are now signed in! <br /> Try creating a post below.
       </p>
+      <Button className="mt-2" onClick={handleLogout} variant="destructive">
+        Logout
+      </Button>
     </div>
   );
 };
 
 export default function Home() {
+  const inputFileRef = useRef<HTMLInputElement>(null);
+  const [postBody, setPostBody] = useState<string>('');
+  const [postFile, setPostFile] = useState<File | undefined>(undefined);
+
   const user = useUser();
 
-  const [postBody, setPostBody] = useState<string>('');
+  const { data: posts } = useGetPostsQuery({});
+  const { mutateAsync } = useCreatePostMutation({
+    config: {
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: ['posts'],
+        });
 
-  const { mutateAsync } = useCreatePostMutation({});
+        setPostBody('');
+        setPostFile(undefined);
 
-  const onSubmitPost = async () => {
+        (inputFileRef.current as HTMLInputElement).value = '';
+      },
+    },
+  });
+
+  const handleSubmitPost = async () => {
     await mutateAsync({
       body: postBody,
+      mediaFile: postFile,
     });
   };
 
@@ -61,7 +90,7 @@ export default function Home() {
     <>
       <HeadMetaData
         ogImageUrl="https://cdn.discordapp.com/attachments/1050790741334569091/1151943122117480558/V6_Academy_Banner_Assets.png"
-        metaDescription="Suplemen belajar lo, buat ilmu tech industry. Gak bermaksud jadi pengganti bootcamp ataupun kuliah. Hanya berharap jadi pelengkap aja."
+        metaDescription="Fullstack monorepo"
       />
       <main className="container flex h-screen max-w-screen-md flex-col justify-between gap-4 px-4 py-16">
         <h1 className="text-center font-heading text-5xl font-bold text-primary">
@@ -71,28 +100,50 @@ export default function Home() {
         {user ? <SignedInState /> : <AuthShowcase />}
 
         <div className="flex flex-1 flex-col gap-4 overflow-y-scroll">
-          {Array.from(
-            [1, 1, 1, 1, 1, 1].map((val) => (
-              <Card key={val}>
-                <CardHeader className="font-semibold">theodevoid</CardHeader>
-                <CardContent>
-                  Lorem ipsum, dolor sit amet consectetur adipisicing elit. Non
-                  corrupti eius dolorem totam culpa odio ex optio, aliquam est
-                  qui.
-                </CardContent>
-              </Card>
-            )),
-          )}
+          {posts?.data.map((post) => (
+            <Card key={post.id}>
+              <CardHeader className="font-semibold">
+                {post.author.userId}
+              </CardHeader>
+              <CardContent>
+                {post.body}
+                {!!post.mediaUrl && (
+                  <AspectRatio className="mt-2" ratio={16 / 9}>
+                    <Image
+                      fill
+                      src={`${post.mediaUrl}`}
+                      alt={`${post.mediaUrl}`}
+                    />
+                  </AspectRatio>
+                )}
+              </CardContent>
+            </Card>
+          ))}
         </div>
 
-        <div className="flex gap-4">
-          <Input
-            onChange={(e) => setPostBody(e.target.value)}
-            type="text"
-            className="flex-1"
-          />
-          <Button onClick={onSubmitPost}>Send</Button>
-        </div>
+        {user && (
+          <>
+            <div className="flex gap-4">
+              <Input
+                value={postBody}
+                onChange={(e) => setPostBody(e.target.value)}
+                type="text"
+                className="flex-1"
+              />
+              <Button onClick={handleSubmitPost}>Send</Button>
+            </div>
+            <input
+              accept=".png,.jpg,.jpeg"
+              ref={inputFileRef}
+              type="file"
+              onChange={(e) => {
+                if (e.target.files) {
+                  setPostFile(e.target.files[0]);
+                }
+              }}
+            />
+          </>
+        )}
       </main>
     </>
   );
