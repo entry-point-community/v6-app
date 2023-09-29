@@ -78,17 +78,78 @@ The default template features a NextJS and NestJS app. The `package` folder will
 
 ## Getting Started
 
-Just do it..
+One thing to note is that this stack is _kind of opinionated_, but you are completely free to tweak anything according to your needs and preferences. For example, this stack heavily depends on Supabase for auth and file storage, but you are still free to setup/build your preferred way of handling auth and storage.
+
+The instructions below will mostly cover the default pre-configured frameworks and libraries I personally chose as the starting template of the V6 Stack.
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
+- [pnpm](https://pnpm.io/installation)
+- [docker](https://www.docker.com/) (optional, for supabase local development)
 
-- pnpm
+### Setup and installation
 
-### Installation
+#### 1. Install packages
 
-1. Install it
+```sh
+$ pnpm install
+```
+
+#### 2. Setup env files
+
+Several `.env.template` files have been created for you. Create your own `.env` to be used in your project. Adjust the needed values accordingly.
+
+#### 3. Initialize supabase
+
+To develop using supabase locally, a supabase config is provided inside the `server` app. Navigate to the `server` folder and run
+
+```sh
+npx supabase start
+```
+
+to start your own local supabase instance through docker. Run
+
+```sh
+npx supabase stop
+```
+
+inside the `server` folder to shutdown the containers. For more guides and reference please refer to their [official docs](https://supabase.com/docs/guides/cli/local-development).
+
+#### 4. Prisma Migrate
+
+Create a Prisma migration to sync changes in your `schema.prisma` to your database. Navigate to the `db` package and run this command.
+
+```sh
+pnpm db:migrate
+```
+
+#### 5. Supabase Auth
+
+If you're using supabase's auth service, chances are you also want to store your user's data inside your database's `public` schema. A minimal SQL function and trigger has been provided for you inside `apps/server/supabase/triggers` .
+
+```sql
+-- handle_new_users.sql
+-- inserts a row into public.Profile
+create function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer set search_path = public
+as $$
+begin
+  insert into public."Profile" ("userId")
+  values (new.id);
+  return new;
+end;
+$$;
+
+-- trigger the function every time a user is created
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();
+
+```
+
+Run this query on your database to duplicate a user's data every time a user signs up using supabase auth.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -96,7 +157,7 @@ This is an example of how to list things you need to use the software and how to
 
 ## Usage
 
-_Please refer to the [Documentation](https://example.com)_
+_Please refer to our non-existent [Documentation](https://example.com)_. We're working on it, I promise.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
